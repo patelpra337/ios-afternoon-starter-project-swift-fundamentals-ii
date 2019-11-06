@@ -16,7 +16,57 @@ import UIKit
 //: e. Use a `String?` for the Terminal, since it may not be set yet (i.e.: waiting to arrive on time)
 //:
 //: f. Use a class to represent a `DepartureBoard` with a list of departure flights, and the current airport
+struct Airport {
+    var arrival: String
+}
 
+struct Flight {
+    var destination: Airport
+    var departureTime: Date?
+    var terminal: String?
+    var airline: String
+    var flight: String
+    var flightStatus: FlightStatus
+}
+
+enum FlightStatus: String {
+    case en_route
+    case scheduled
+    case canceled
+    case delayed
+    case boarding
+}
+
+class DepartureBoard {
+    var departureFlightBA: String
+    var departureFlightUN: String
+    var departureFlightAF: String
+    var currentAirport: String
+    var newFlight: [Flight]
+    
+    init(departureFlightBA: String, departureFlightUN: String, departureFlightAF: String, currentAirport: String) {
+        self.departureFlightBA = departureFlightBA
+        self.departureFlightUN = departureFlightUN
+        self.departureFlightAF = departureFlightAF
+        self.currentAirport = currentAirport
+        self.newFlight = []
+        
+        var checkFlight = DepartureBoard(departureFlightBA: "British Airways", departureFlightUN: "United", departureFlightAF: "Air France", currentAirport: "JFK")
+        
+        func unwrapDate(dateToUnwrap: Optional<Date>) -> String {
+            if let returnDate = dateToUnwrap {
+                return returnDate.toString(dateFormat: "HH:mm")
+            } else {
+                return "TBD"
+            }
+        }
+        func unwrapTerminal(terminalToUnwrap: Optional<String>) -> String {
+            if let returnTerminal = terminalToUnwrap {
+                return returnTerminal
+            } else {
+                return "TBD"
+            }
+        }
 
 
 //: ## 2. Create 3 flights and add them to a departure board
@@ -29,8 +79,33 @@ import UIKit
 //: d. Make one of the flights have a `nil` terminal because it has not been decided yet.
 //:
 //: e. Stretch: Look at the API for [`DateComponents`](https://developer.apple.com/documentation/foundation/datecomponents?language=objc) for creating a specific time
+let addFlights = DepartureBoard(departureFlightBA: "British Airways", departureFlightUN: "United", departureFlightAF: "Air France", currentAirport: "JFK")
+let newFlightAA = Flight(destination: Airport(arrival: "Mexico"), departureTime: Date(), terminal: nil, airline: "AeroMexico", flight: "AA2291", flightStatus: .scheduled)
+let newFlightVA = Flight(destination: Airport(arrival: "France"), departureTime: Date(), terminal: "B", airline: "AirFrance", flight: "VS4", flightStatus: .canceled)
+let newFlightUN = Flight(destination: Airport(arrival: "United States"), departureTime: Date(), terminal: "A", airline: "DeltaAir", flight: "UA9717", flightStatus: .delayed)
 
+addFlights.newFlight.append(newFlightAA)
+addFlights.newFlight.append(newFlightVA)
+addFlights.newFlight.append(newFlightUN)
 
+func alertPassengers() {
+    for departure in addFlights.newFlight {
+        switch departure.flightStatus {
+        case .canceled:
+            print("We're sorry but your flight to \(departure.destination) has been canceled, here is a $500 voucher.")
+        case .en_route:
+            print("Your flight to \(departure.destination) is on time.")
+        case .scheduled:
+            print("Your flight to \(departure.destination) is scheduled to depart at \(unwrapDate(dateToUnwrap: departure.departureTime)).")
+        case .delayed:
+            print("Your flight to \(departure.destination) is on route but delayed.")
+        case .boarding:
+            print("Your flight is boarding, please head to terminal: \(unwrapTerminal(terminalToUnwrap: departure.terminal)) immediately. The doors are closing soon.")
+        }
+    }
+}
+
+print(alertPassengers())
 
 //: ## 3. Create a free-standing function that can print the flight information from the `DepartureBoard`
 //: a. Use the function signature: `printDepartures(departureBoard:)`
@@ -40,8 +115,13 @@ import UIKit
 //: c. Make your `FlightStatus` enum conform to `String` so you can print the `rawValue` String values from the `enum`. See the [enum documentation](https://docs.swift.org/swift-book/LanguageGuide/Enumerations.html).
 //:
 //: d. Print out the current DepartureBoard you created using the function
-
-
+func printDepartures(departureBoard: DepartureBoard) {
+    for flight in departureBoard.newFlight {
+        print("Flights \(flight.flight) to \(flight.self)")
+        print("\tStatus: \(flight.flightStatus.rawValue)")
+    }
+}
+printDepartures(departureBoard: addFlights)
 
 
 //: ## 4. Make a second function to print print an empty string if the `departureTime` is nil
@@ -60,7 +140,6 @@ import UIKit
 //:     Destination: Boston Airline: KLM Flight: KL 6966 Departure Time: 1:26 PM Terminal: 4 Status: Scheduled
 
 
-
 //: ## 5. Add an instance method to your `DepatureBoard` class (above) that can send an alert message to all passengers about their upcoming flight. Loop through the flights and use a `switch` on the flight status variable.
 //: a. If the flight is canceled print out: "We're sorry your flight to \(city) was canceled, here is a $500 voucher"
 //:
@@ -75,7 +154,7 @@ import UIKit
 //: d. Call the `alertPassengers()` function on your `DepartureBoard` object below
 //:
 //: f. Stretch: Display a custom message if the `terminal` is `nil`, tell the traveler to see the nearest information desk for more details.
-
+alertPassengers()
 
 
 
@@ -96,6 +175,14 @@ import UIKit
 //: e. Make sure to cast the numbers to the appropriate types so you calculate the correct airfare
 //:
 //: f. Stretch: Use a [`NumberFormatter`](https://developer.apple.com/documentation/foundation/numberformatter) with the `currencyStyle` to format the amount in US dollars.
+func calculateAirFare(checkedBags: Int, distance: Int, travelers: Int) -> Double {
+    var totalAirFare = 0
+    totalAirFare += (checkedBags * 25) + (distance / 10)
+    totalAirFare = totalAirFare * travelers
+    return Double(totalAirFare)
+        }
+print("$",calculateAirFare(checkedBags: 2, distance: 2000, travelers: 3))
 
-
+    }
+}
 
