@@ -138,8 +138,15 @@ printDepartures(departureBoard: addFlights)
 //:     Destination: Los Angeles Airline: Delta Air Lines Flight: KL 6966 Departure Time:  Terminal: 4 Status: Canceled
 //:     Destination: Rochester Airline: Jet Blue Airways Flight: B6 586 Departure Time: 1:26 PM Terminal:  Status: Scheduled
 //:     Destination: Boston Airline: KLM Flight: KL 6966 Departure Time: 1:26 PM Terminal: 4 Status: Scheduled
-
-
+        func printDepartures2(departureBoard: DepartureBoard) {
+            for departure in departureBoard.newFlight {
+                let date = unwrapDate(dateToUnwrap: departure.departureTime)
+                let terminal = unwrapTerminal(terminalToUnwrap: departure.terminal)
+                print("Destination: \(departure.destination) | Airline: \(departure.airline) | Departure Time: \(date) | Terminal: \(terminal) |  Status: \(departure.flightStatus.rawValue)")
+            }
+        }
+                
+        printDepartures2(departureBoard: addFlights)
 //: ## 5. Add an instance method to your `DepatureBoard` class (above) that can send an alert message to all passengers about their upcoming flight. Loop through the flights and use a `switch` on the flight status variable.
 //: a. If the flight is canceled print out: "We're sorry your flight to \(city) was canceled, here is a $500 voucher"
 //:
@@ -186,3 +193,12 @@ print("$",calculateAirFare(checkedBags: 2, distance: 2000, travelers: 3))
     }
 }
 
+extension Date {
+    func toString(dateFormat format:String ) -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = format
+        dateFormatter.dateStyle = .none
+        dateFormatter.timeStyle = .short
+        return dateFormatter.string(from: self)
+    }
+}
